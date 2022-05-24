@@ -1,30 +1,69 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactECharts from 'echarts-for-react';
 
-const BarChart = () => {
+const BarChart = ({data}:{data:[]}) => {
+    const [x, setX] = useState([]);
+    const [y, setY] = useState([]);
+    
+    let alcohol =[];
+    let malicAcid =[];
+    
+    useEffect(()=>{
+        
+        data.map(d=>{
+            alcohol.push(d.Alcohol)
+            malicAcid.push(d.MalicAcid)
+          });
+          setX(malicAcid);
+          setY(alcohol);
+    },[data])
     const options = {
         grid: { top: 8, right: 8, bottom: 24, left: 36 },
         xAxis : { 
           type: 'category',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: x,
+          boundaryGap: [0, '100%']
         },
         yAxis: {
           type: 'value',
+          boundaryGap: [0, '100%']
         },
+
+        dataZoom: [
+            {
+            type: 'inside',
+            start: 0,
+            end: 10
+            },
+            {
+            start: 0,
+            end: 10
+            }
+        ],
         series: [
           {
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
+            symbolSize: 5,
+            data: y,
             type: 'bar',
             smooth: true,
           },
+          
         ],
-        tooltip: {
-          trigger: 'axis',
-        },
+        title: {
+            text: 'Alcohol on horizontal axis and average of Malic Acid on vertical axis',
+            subtext: 'Data set link',
+            sublink: 'https://archive.ics.uci.edu/ml/datasets/wine',
+            left: 'center'
+          }, 
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'cross'
+            }
+          },
       };
     return (
         <div className='chart'>
-            <h3>Bar Chart</h3>
             <ReactECharts option={options} />
         </div>
     );
